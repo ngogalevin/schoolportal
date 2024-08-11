@@ -14,7 +14,12 @@ from rest_framework.authentication import TokenAuthentication
 from django.views import View
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.contrib.auth.mixins import LoginRequiredMixin
+import logging
+from django.urls import reverse_lazy
 
+
+logger = logging.getLogger(__name__)
 
 class StudentViewSet(viewsets.ModelViewSet):
     queryset = Student.objects.all()
@@ -30,44 +35,36 @@ class StudentViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 class LoginAPIView(APIView):
-    authentication_classes = []  # Disable authentication for this view
-    permission_classes = []      # Disable permissions for this view
+    authentication_classes = []
+    permission_classes = []
     
     def post(self, request, *args, **kwargs):
         registration_number = request.data.get('registration_number')
         password = request.data.get('password')
+        next_url = request.data.get('next', '/')  # Default to home page if not provided
+
+        logger.info(f"Login attempt for {registration_number}, next_url: {next_url}")
 
         if not registration_number or not password:
             return Response({"error": "Registration number and password are required."}, status=status.HTTP_400_BAD_REQUEST)
 
         user = authenticate(request, username=registration_number, password=password)
         if user:
+            login(request, user)
             user.last_login = timezone.now()
             user.save(update_fields=['last_login'])
-
             token, _ = Token.objects.get_or_create(user=user)
 
-            # Get the URL for the contact page
-            contact_page_url = reverse('contact')  # Assuming 'contact' is the name of your contact page URL pattern
+            logger.info(f"User {registration_number} authenticated successfully. Redirecting to {next_url}")
 
-            # Send the token and redirect URL in the response
-            response = Response({
-                "token": token.key,
-                "redirect_url": contact_page_url
-            }, status=status.HTTP_200_OK)
-
-            # Set the token in a secure HTTP-only cookie
-            response.set_cookie(
-                'authToken',
-                token.key,
-                httponly=True,
-                secure=True,
-                samesite='Strict'
-            )
-
-            return response
+            return Response({
+                'token': token.key,
+                'redirect_url': next_url  # Include the next_url in the response
+            })
         else:
+            logger.warning(f"Failed login attempt for {registration_number}")
             return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+
 
 class LogoutAPIView(APIView):
     def post(self, request, *args, **kwargs):
@@ -95,19 +92,19 @@ class CheckLoginStatusAPIView(APIView):
 
 
 class AuthView(View):
-    authentication_classes = [TokenAuthentication]
-    
     def get(self, request, *args, **kwargs):
-        user = request.user
-        if user.is_authenticated:
-            return redirect('contact')
-        return render(request, 'login.html')
+        next_url = request.GET.get('next', '/')
+        if request.user.is_authenticated:
+            return redirect(next_url)
+        return render(request, 'login.html', {'next': next_url})
 
+    def post(self, request, *args, **kwargs):
+        return LoginAPIView.as_view()(request._request, *args, **kwargs)
 
-class ContactView(View):
+   
+class ContactView(LoginRequiredMixin, View):
+    login_url = reverse_lazy('auth')
+    redirect_field_name = 'next'
+
     def get(self, request):
         return render(request, 'contact.html')
-
-
-
-

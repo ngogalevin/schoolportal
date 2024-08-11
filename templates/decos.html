@@ -28,8 +28,8 @@
     
 
     <link rel="stylesheet" href="{% static 'custom_styles/css/style.css' %}">
-<script src="{% static 'custom_styles/lib/easing/easing.min.js' %}"></script>
-<script src="{% static 'custom_styles/lib/owlcarousel/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'custom_styles/lib/easing/easing.min.js' %}"></script>
+    <script src="{% static 'custom_styles/lib/owlcarousel/owl.carousel.min.js' %}"></script>
 
 
     <link rel="stylesheet" href="{% static 'custom_styles/css/bootstrap.min.css' %}">
@@ -79,54 +79,59 @@
                         </div>
                         <a href="contact.html" class="nav-item nav-link active">Contact</a>
                     </div>
-                    <a href="" id="logout" class="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block">Logout<i class="fa fa-arrow-right ms-3"></i></a>
+                    <a href="#" id="logout" class="btn btn-primary rounded-0 py-4 px-lg-5 d-none d-lg-block">Logout<i class="fa fa-arrow-right ms-3"></i></a>
                 </div>
             </nav>
-            <!-- Navbar End --><script>
-        $(document).ready(function() {
-            $('#logout').on('click', function(e) {
-                e.preventDefault();  // Prevent the default anchor behavior
+        <div>
+            <!-- Navbar End -->
+    {% endif %}
+
+
+    {% block content %}
+    {% endblock %}
     
-                // Function to get the CSRF token from the cookie
-                function getCookie(name) {
-                    let cookieValue = null;
-                    if (document.cookie && document.cookie !== '') {
-                        const cookies = document.cookie.split(';');
-                        for (let i = 0; i < cookies.length; i++) {
-                            const cookie = cookies[i].trim();
-                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                                break;
-                            }
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const logoutButton = document.getElementById('logout');
+            if (logoutButton) {
+                logoutButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    fetch('{% url "logout" %}', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': getCookie('csrftoken'),
+                            'Authorization': 'Token ' + localStorage.getItem('authToken')
+                        },
+                    }).then(response => {
+                        if (response.ok) {
+                            localStorage.removeItem('authToken');  // Remove the token from localStorage
+                            window.location.href = '{% url "auth" %}';  // Redirect to login page
+                        } else {
+                            console.error('Logout failed');
                         }
-                    }
-                    return cookieValue;
-                }
-    
-                // CSRF token
-                const csrftoken = getCookie('csrftoken');
-    
-                $.ajax({
-                    url: '/api/logout/',  // Your logout endpoint
-                    type: 'POST',
-                    headers: { 'X-CSRFToken': csrftoken },
-                    success: function(response) {
-                        // Redirect to auth page after successful logout
-                        window.location.href = "{% url 'auth' %}";
-                    },
-                    error: function(error) {
-                        alert('Logout failed!');
-                    }
+                    }).catch(error => {
+                        console.error('Error:', error);
+                    });
                 });
-            });
+            }
         });
+        
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
     </script>
-        {% endif %}
-
-
-        {% block content %}
-        {% endblock %}
-    
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{% static 'custom_styles/lib/wow/wow.min.js' %}"></script>
@@ -135,45 +140,6 @@
     <script src="{% static 'custom_styles/lib/owlcarousel/owl.carousel.min.js' %}"></script>
     <script src="{% static 'custom_styles/js/main.js' %}"></script>
 
-    <script>
-        $(document).ready(function() {
-            $('#logout').on('click', function(e) {
-                e.preventDefault();  // Prevent the default anchor behavior
-    
-                // Function to get the CSRF token from the cookie
-                function getCookie(name) {
-                    let cookieValue = null;
-                    if (document.cookie && document.cookie !== '') {
-                        const cookies = document.cookie.split(';');
-                        for (let i = 0; i < cookies.length; i++) {
-                            const cookie = cookies[i].trim();
-                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                                break;
-                            }
-                        }
-                    }
-                    return cookieValue;
-                }
-    
-                // CSRF token
-                const csrftoken = getCookie('csrftoken');
-    
-                $.ajax({
-                    url: '/api/logout/',  // Your logout endpoint
-                    type: 'POST',
-                    headers: { 'X-CSRFToken': csrftoken },
-                    success: function(response) {
-                        // Redirect to auth page after successful logout
-                        window.location.href = "{% url 'auth' %}";
-                    },
-                    error: function(error) {
-                        alert('Logout failed!');
-                    }
-                });
-            });
-        });
-    </script>
     {% block other_js %}
     {% endblock other_js %}
     

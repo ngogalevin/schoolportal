@@ -15,6 +15,7 @@
                 <div class="d-flex justify-content-center form_container">
                     <form id="login-form">
                         {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ next }}">
                         <div class="input-group mb-3">
                             <div class="input-group-append">
                                 <span class="input-group-text"><i class="fas fa-user"></i></span>
@@ -56,8 +57,7 @@
     </div>
 
     <script>
-        $(document).ready(function() {
-			// Function to get the CSRF token from the cookie
+		$(document).ready(function() {
 			function getCookie(name) {
 				let cookieValue = null;
 				if (document.cookie && document.cookie !== '') {
@@ -66,33 +66,31 @@
 						const cookie = cookies[i].trim();
 						if (cookie.substring(0, name.length + 1) === (name + '=')) {
 							cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-							//alert(cookieValue);
 							break;
 						}
 					}
 				}
 				return cookieValue;
 			}
-		
-			// CSRF token
+	
 			const csrftoken = getCookie('csrftoken');
-			//alert(csrftoken);
-			// Function to get the authentication token (from localStorage)
+	
 			function getAuthToken() {
 				return localStorage.getItem('authToken');
 			}
-			//alert(localStorage.getItem('authToken'));
+	
 			// Check login status on page load
 			$.ajax({
 				url: '/api/check-login-status/',
 				type: 'GET',
 				headers: { 
-					'Authorization': 'Token ' + getAuthToken(),  // Include the token in the headers
+					'Authorization': 'Token ' + getAuthToken(),
 					'X-CSRFToken': csrftoken
 				},
 				success: function(response) {
 					if (response.is_logged_in) {
-						window.location.href = "{% url 'contact' %}";
+						const nextUrl = $('input[name="next"]').val() || '/';
+						window.location.href = nextUrl;
 					} else {
 						$('#login-container').show();
 					}
@@ -101,31 +99,35 @@
 					$('#login-container').show();
 				}
 			});
-		
+	
 			$('#login-form').on('submit', function(e) {
 				e.preventDefault();
-		
+	
 				const registration_number = $('input[name="registration_number"]').val();
 				const password = $('input[name="password"]').val();
+				const next = $('input[name="next"]').val();
+	
 				$.ajax({
-					url: '/api/login/',  // Corrected the URL to the LoginAPIView
+					url: '/api/login/',
 					type: 'POST',
 					contentType: 'application/json',
-					data: JSON.stringify({ registration_number: registration_number, password: password }),
+					data: JSON.stringify({ 
+						registration_number: registration_number, 
+						password: password,
+						next: next
+					}),
 					headers: { 'X-CSRFToken': csrftoken },
 					success: function(response) {
-						// Save token to localStorage
 						localStorage.setItem('authToken', response.token);
-						window.location.href = "{% url 'contact' %}";
+						window.location.href = response.redirect_url || '/';
 					},
-					error: function() {
-						alert('Login failed!');
+					error: function(xhr) {
+						alert(xhr.responseJSON.error || 'Login failed!');
 					}
 				});
 			});
 		});
-		
-		
-    </script>
+	</script>
+	
 
 {% endblock %}
