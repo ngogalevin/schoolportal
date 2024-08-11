@@ -1,0 +1,90 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+    <title>{% block title %}{% endblock %}</title>   
+
+    <!-- Favicon -->
+    <link href="{% static 'custom_styles/img/favicon.ico' %}" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Inter:wght@700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="{% static 'custom_styles/lib/animate/animate.min.css' %}" rel="stylesheet">
+    <link href="{% static 'custom_styles/lib/owlcarousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
+
+    
+
+    <!-- Template Stylesheet -->
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css">
+	<link rel="stylesheet" href="{% static 'custom_styles/css/all.css' %}" />	
+	<link rel="stylesheet" href="{% static 'custom_styles/css/bootstrap4.min.css' %}">
+    <link rel="stylesheet" href="{% static 'custom_styles/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'custom_styles/webfonts/fa-solid-900.woff2' %}">
+
+    <link rel="stylesheet" href="{% static 'custom_styles/webfonts/fa-solid-900.woff' %}">
+    <link rel="stylesheet" href="{% static 'custom_styles/webfonts/fa-solid-900.ttf' %}">
+    <link rel="stylesheet" href="{% static 'custom_styles/webfonts/fa-solid-900.svg' %}">
+    <link rel="stylesheet" href="{% static 'custom_styles/webfonts/fa-solid-900.eot' %}">
+    <link rel="stylesheet" href="{% static 'custom_styles/webfonts/fa-regular-400.woff2' %}">
+    <link rel="stylesheet" href="{% static 'custom_styles/webfonts/fa-regular-400.woff' %}">
+    <link rel="stylesheet" href="{% static 'custom_styles/webfonts/fa-regular-400.ttf' %}">
+    <link rel="stylesheet" href="{% static 'custom_styles/webfonts/fa-regular-400.svg' %}">
+    <link rel="stylesheet" href="{% static 'custom_styles/webfonts/fa-regular-400.eot' %}">
+    <link rel="stylesheet" href="{% static 'custom_styles/webfonts/fa-brands-400.woff2' %}">
+    <link rel="stylesheet" href="{% static 'custom_styles/webfonts/fa-brands-400.woff' %}">
+    <link rel="stylesheet" href="{% static 'custom_styles/webfonts/fa-brands-400.ttf' %}">
+    <link rel="stylesheet" href="{% static 'custom_styles/webfonts/fa-brands-400.svg' %}">
+    <link rel="stylesheet" href="{% static 'custom_styles/webfonts/fa-brands-400.eot' %}">
+
+
+
+
+    <link rel="stylesheet" href="{% static 'custom_styles/css/custom.css' %}" >
+    <link rel="stylesheet" href="{% static 'custom_styles/css/style.css' %}" >
+
+    <link rel="stylesheet" href="{% static 'custom_styles/css/style.css' %}">
+    <script src="{% static 'custom_styles/lib/easing/easing.min.js' %}"></script>
+    <script src="{% static 'custom_styles/lib/owlcarousel/owl.carousel.min.js' %}"></script>
+
+    {% block other_style %}
+    {% endblock other_style %}
+
+</head>
+<body>
+    
+    
+        
+
+        {% block content %}
+        {% endblock %}
+    
+    <script src="{% static 'jquery.min.js' %}"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'custom_styles/lib/wow/wow.min.js' %}"></script>
+    <script src="{% static 'custom_styles/lib/easing/easing.min.js' %}"></script>
+    <script src="{% static 'custom_styles/lib/waypoints/waypoints.min.js' %}"></script>
+    <script src="{% static 'custom_styles/lib/owlcarousel/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'custom_styles/js/main.js' %}"></script>
+
+    {% block other_js %}
+    {% endblock other_js %}
+    
+
+</body>
+</html>

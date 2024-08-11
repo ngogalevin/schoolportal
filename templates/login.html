@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}STAFF LOGIN{% endblock %}
+
+{% block content %}
+    <div class="container h-100" id="login-container">
+        <div class="d-flex justify-content-center h-100">
+            <div class="user_card">
+                <div class="d-flex justify-content-center">
+                    <div class="brand_logo_container">
+                        <img src="https://simpauldesign.com/wp-content/uploads/2019/10/equity-bank-new-logo.png" class="brand_logo" alt="Logo">
+                    </div>
+                </div>
+                <div class="d-flex justify-content-center form_container">
+                    <form id="login-form">
+                        {% csrf_token %}
+                        <div class="input-group mb-3">
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            </div>
+                            <input type="text" name="registration_number" class="form-control input_user" value="" placeholder="Registration Number">
+                        </div>
+                        <div class="input-group mb-2">
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="fas fa-key"></i></span>
+                            </div>
+                            <input type="password" name="password" class="form-control input_pass" value="" placeholder="password">
+                        </div>
+                        <div class="form-group">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="customControlInline">
+                                <label class="custom-control-label" for="customControlInline">Remember me</label>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-center mt-3 login_container">
+                            <button type="submit" name="button" class="btn login_btn">Login</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="mt-4">
+                    <div class="d-flex justify-content-center links">
+                        <a href="#">Forgot your password?</a>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="d-flex justify-content-center links">
+                        <hr class="ml-2">
+                    </div>
+                    <div class="d-flex justify-content-center links">
+                        <a href="#">Designed By Levin</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+			// Function to get the CSRF token from the cookie
+			function getCookie(name) {
+				let cookieValue = null;
+				if (document.cookie && document.cookie !== '') {
+					const cookies = document.cookie.split(';');
+					for (let i = 0; i < cookies.length; i++) {
+						const cookie = cookies[i].trim();
+						if (cookie.substring(0, name.length + 1) === (name + '=')) {
+							cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+							//alert(cookieValue);
+							break;
+						}
+					}
+				}
+				return cookieValue;
+			}
+		
+			// CSRF token
+			const csrftoken = getCookie('csrftoken');
+			//alert(csrftoken);
+			// Function to get the authentication token (from localStorage)
+			function getAuthToken() {
+				return localStorage.getItem('authToken');
+			}
+			//alert(localStorage.getItem('authToken'));
+			// Check login status on page load
+			$.ajax({
+				url: '/api/check-login-status/',
+				type: 'GET',
+				headers: { 
+					'Authorization': 'Token ' + getAuthToken(),  // Include the token in the headers
+					'X-CSRFToken': csrftoken
+				},
+				success: function(response) {
+					if (response.is_logged_in) {
+						window.location.href = "{% url 'contact' %}";
+					} else {
+						$('#login-container').show();
+					}
+				},
+				error: function() {
+					$('#login-container').show();
+				}
+			});
+		
+			$('#login-form').on('submit', function(e) {
+				e.preventDefault();
+		
+				const registration_number = $('input[name="registration_number"]').val();
+				const password = $('input[name="password"]').val();
+				$.ajax({
+					url: '/api/login/',  // Corrected the URL to the LoginAPIView
+					type: 'POST',
+					contentType: 'application/json',
+					data: JSON.stringify({ registration_number: registration_number, password: password }),
+					headers: { 'X-CSRFToken': csrftoken },
+					success: function(response) {
+						// Save token to localStorage
+						localStorage.setItem('authToken', response.token);
+						window.location.href = "{% url 'contact' %}";
+					},
+					error: function() {
+						alert('Login failed!');
+					}
+				});
+			});
+		});
+		
+		
+    </script>
+
+{% endblock %}
