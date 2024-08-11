@@ -69,7 +69,12 @@ class LoginAPIView(APIView):
 class LogoutAPIView(APIView):
     def post(self, request, *args, **kwargs):
         if request.user.is_authenticated:
+            # Delete the token
             Token.objects.filter(user=request.user).delete()
+            
+            # Clear the session
+            request.session.flush()
+            
             return Response({"message": "Logged out successfully."}, status=status.HTTP_200_OK)
         return Response({"error": "Not authenticated."}, status=status.HTTP_401_UNAUTHORIZED)
 
