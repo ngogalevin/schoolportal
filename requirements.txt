@@ -120,7 +120,7 @@ PyYAML==5.4.1
 qrcode==7.4.2
 redis==5.0.8
 reportlab==3.6.8
-requests==2.25.1
+requests==2.32.4
 rich==13.7.1
 screen-resolution-extra==0.0.0
 SecretStorage==3.3.1
