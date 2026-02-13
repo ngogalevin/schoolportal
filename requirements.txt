@@ -19,7 +19,7 @@ click==8.0.3
 colorama==0.4.4
 command-not-found==0.3
 contourpy==1.2.1
-cryptography==3.4.8
+cryptography==46.0.5
 cupshelpers==1.0
 cycler==0.12.1
 dbus-python==1.2.18
