@@ -1,1 +1,1 @@
-This is a project about school
+This is a project about Nairobi school
